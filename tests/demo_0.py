@@ -5,10 +5,10 @@ from data_handler import start_app, ResultEnum
 """
 需要依赖以下环境变量:
 
-TG_EMAIL_HOST
-TG_EMAIL_PORT
-TG_EMAIL_ACCOUNT
-TG_EMAIL_PASSWD
+TG_EMAIL_HOST    mail.migu.cn
+TG_EMAIL_PORT    25
+TG_EMAIL_ACCOUNT 邮箱账号
+TG_EMAIL_PASSWD  OA密码
 """
 
 
@@ -35,7 +35,7 @@ notify_config = {
         #     "to_users": ["users3", "users4"],
         # }
     ],
-    'sms': [ # 短信通知，非必填
+    'sms': [ # 短信通知，非必填，当前也暂未实现
         {
             "template_id": "1",
             "to_users": ["users1", "users2"],

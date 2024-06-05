@@ -1,14 +1,13 @@
 import logging
 
-from typing import List, Union, Optional
+from typing import List, Union
 from data_handler.models.base import SESSION
-from data_handler.models import ExcutionRecordDB, ExcutionRecordModel, NotificationModel
-from data_handler.decorator import transaction, catch_exception_to_developer
+from data_handler.models import ExcutionRecordDB, ExcutionRecordModel
+from data_handler.decorator import transaction
 from data_handler.dh_typing import DictModel, JsonStrModel, ResultEnum
 from data_handler.env import Environment
 
 
-# @catch_exception_to_developer
 class ExcutionRecord:
     logger = logging.getLogger(__name__)
 

@@ -2,7 +2,6 @@ import os
 import logging
 import warnings
 import typing
-import traceback
 
 from data_handler.logger import config_log
 from data_handler.env import Environment
@@ -10,7 +9,6 @@ from data_handler.services import ExcutionRecord
 from data_handler.settings import LOG_PATH
 from data_handler.dh_typing import ResultEnum
 from data_handler.event import events
-from data_handler.decorator import catch_exception_to_developer
 
 if typing.TYPE_CHECKING:
     from data_handler.models import NotificationModel
@@ -29,7 +27,6 @@ except Exception as e:
     warnings.warn(e)
 
 
-# @catch_exception_to_developer
 def start_app(
     *,
     notify_config: typing.Union["NotificationModel", "JsonStrModel", "DictModel"],
@@ -101,11 +98,11 @@ def start_app(
 
     2. 增加、删除事件
     ```
-    # 目前系统 `testcase_fail` 事件具有唯一监听器是 `Environment.notify` ，此事件在记录数据中有失败时会出发消息通知
+    # 目前系统 `testcase_fail` 事件具有监听器 `Environment.warning_email` 和 `Environment.warning_wx` ，事件在记录数据时如果有失败时用例会触发消息通知
     app = start_app(notify_config_dict)
 
     # 事件可以移除
-    app.env.events.testcase_fail.remove_listener(app.env.notify)
+    app.env.events.testcase_fail.remove_listener(app.env.warning_email)
 
     # 也可以增加自定义事件，事件回调函数有两个参数，其类型如下
     def user_listener(model: ExcutionRecordModel, notify: NotificationModel):

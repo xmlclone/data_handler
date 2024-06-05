@@ -21,7 +21,6 @@ def catch_exception_to_developer(target):
     return wrapper
 
 
-# @catch_exception_to_developer
 def transaction(fn: Callable, commit=True, rollback=True):
     def wrapper(*args, **kwargs):
         try:
