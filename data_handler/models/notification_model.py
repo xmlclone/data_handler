@@ -2,7 +2,7 @@ from typing import List, Optional
 from pydantic.dataclasses import dataclass
 from pydantic import field_validator
 from data_handler.models.base import MD_BASE
-from data_handler.dh_typing import EmailUser, EmailFile, SMSUser, WXUser
+from data_handler.dh_typing import EmailUser, EmailFile, SMSUser, WXUser, TemplateID
 
 
 EMAIL_TEMPLATE1 = {
@@ -29,32 +29,32 @@ SMS_TEMPLAET1 = {}
 
 @dataclass
 class EmailModel:
-    template_id: int | str
+    template_id: TemplateID
     to_users: List[EmailUser]
     cc_users: Optional[List[EmailUser]] = None
     attachements: Optional[List[EmailFile]] = None
 
     @field_validator('template_id')
     @classmethod
-    def convert_tid(cls, tid: int | str) -> str:
+    def convert_tid(cls, tid: TemplateID) -> str:
         if int(tid) == 1:
             return EMAIL_TEMPLATE1
 
 
 @dataclass
 class SMSModel:
-    template_id: int | str
+    template_id: TemplateID
     to_users: List[SMSUser]
 
 
 @dataclass
 class WxModel:
-    template_id: int | str
+    template_id: TemplateID
     to_users: List[WXUser]
 
     @field_validator('template_id')
     @classmethod
-    def convert_tid(cls, tid: int | str) -> str:
+    def convert_tid(cls, tid: TemplateID) -> str:
         if int(tid) == 1:
             # return 'b5GeMj60Az_xQ1iowYCqjiY_Vu0_055utiPchaQDinU'
             return '7PakBXJdWj_DES5AZHxAF6NTajDID_riqhA9TtkkwUU'

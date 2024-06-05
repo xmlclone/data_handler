@@ -2,6 +2,7 @@ import smtplib
 import os
 import logging
 
+from typing import List, Dict
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -26,11 +27,11 @@ class Email:
 
     def send(
         self,
-        to_list: list[str],
+        to_list: List[str],
         subject: str,
         content: str = "",
-        cc_list: list[str] = [],
-        attachment: dict = {}
+        cc_list: List[str] = [],
+        attachment: Dict = {}
     ):
         """群发邮件功能
         :param to_list: 收件人列表.
