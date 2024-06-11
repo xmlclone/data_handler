@@ -3,15 +3,18 @@ from mgtg_msgntf import start_app, ResultStatus, FailLevel
 
 
 """
-需要依赖以下环境变量:
+使用前，请先使用命令初始化环境: 
+python -m mgtg_msgntf.__main__ init-db
 
+并配置以下环境变量:
 TG_EMAIL_HOST    mail.migu.cn
 TG_EMAIL_PORT    25
-TG_EMAIL_ACCOUNT 邮箱账号
+TG_EMAIL_ACCOUNT 邮箱账号  --- 配置自己的邮箱账号
 TG_EMAIL_PASSWD  OA密码
 """
 
 
+# 通知模板
 notify_config = {
     "email": [
         {
@@ -48,6 +51,7 @@ notify_config = {
 }
 
 
+# 数据模板
 model = {
     "project": "test-project",
     "bus_id": 1,  # 咪咕探针，固定传1
@@ -102,4 +106,6 @@ model = {
 }
 
 app = start_app(notify_config=notify_config, console_log_level='info')
+
+# 增加一条数据
 app.add(model)
