@@ -2,8 +2,10 @@ import logging
 import traceback
 
 from typing import Callable
-from data_handler.models.base import SESSION
-from data_handler.event import events
+from mgtg_msgntf.model.base import SESSION
+from mgtg_msgntf.event import events
+from mgtg_msgntf.exception import MgtgMsgtfError, MgtgDBError
+from sqlalchemy.exc import OperationalError
 
 
 logger = logging.getLogger(__name__)
@@ -14,10 +16,10 @@ def catch_exception_to_developer(target):
         try:
             return target(*args, **kwargs)
         except Exception as e:
-            logger.error(e)
+            logger.debug(e)
             logger.debug(traceback.format_exc())
             events.fw_exception.fire(e=e)
-            raise
+            raise MgtgMsgtfError('msg notify fw error, see the log file for detail.')
     return wrapper
 
 
@@ -29,10 +31,13 @@ def transaction(fn: Callable, commit=True, rollback=True):
             if commit:
                 SESSION.commit()
             return result
-        except:
+        except Exception as e:
             if rollback:
                 SESSION.rollback()
-            raise
+            logger.debug(e)
+            logger.debug(traceback.format_exc())
+            events.fw_exception.fire(e=e)
+            raise MgtgDBError('msg nofity db error.')
     return wrapper
 
 

@@ -1,5 +1,6 @@
 CREATE TABLE excution_record (
         id INTEGER NOT NULL,
+        bus_id INTEGER NOT NULL,
         project VARCHAR NOT NULL,
         scene VARCHAR NOT NULL,
         area VARCHAR,

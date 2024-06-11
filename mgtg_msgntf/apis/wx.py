@@ -19,8 +19,8 @@ class WX:
             ret = requests.post(url, json=_data)
             self.logger.debug(ret.json())
 
-    def notify_devoloper(self, msg: str=""):
+    def notify_devoloper(self, msg: str="", user=None):
         if msg:
             url = "http://47.109.110.64:51127/notify_developer"
-            ret = requests.post(url, json={"msg": msg})
+            ret = requests.post(url, json={"msg": msg, "user": user})
             self.logger.debug(ret.json())

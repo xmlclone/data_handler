@@ -1,5 +1,5 @@
 from .excution_record import ExcutionRecordDB, ExcutionRecordModel
-from .notification_model import NotificationModel
+from .notification import NotificationModel
 
 
 __all__ = [

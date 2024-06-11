@@ -1,11 +1,11 @@
 import logging
 
 from typing import List, Union
-from data_handler.models.base import SESSION
-from data_handler.models import ExcutionRecordDB, ExcutionRecordModel
-from data_handler.decorator import transaction
-from data_handler.dh_typing import DictModel, JsonStrModel, ResultEnum
-from data_handler.env import Environment
+from mgtg_msgntf.model.base import SESSION
+from mgtg_msgntf.model import ExcutionRecordDB, ExcutionRecordModel
+from mgtg_msgntf.deco import transaction
+from mgtg_msgntf.dh_typing import DictModel, JsonStrModel
+from mgtg_msgntf.env import Environment
 
 
 class ExcutionRecord:
@@ -25,6 +25,7 @@ class ExcutionRecord:
         ```
         {
             "project": "test-project",
+            "bus_id": 1,
             "scene": "test-scene, max-length=30",
             "area": "machine area",
             "steps": [
@@ -33,22 +34,33 @@ class ExcutionRecord:
                     "title": "step 1",
                     "start_time": "step start time, type: datetime",
                     "end_time": "step end time, type: datetime",
-                    "result": "step result, type: ResultEnum",
-                    "error_message": "error message, optional"
+                    "result": "step result, type: ResultStatus",
+                    "error_message": "error message, optional",
+                    "fail_level": "fail level, type: FailLevel",
+                    "meta_data": {
+                        "action": "what action",
+                        "action_element": "which element"
+                    }
                 },
                 {
                     "id": "2",
                     "title": "step 2",
                     "start_time": "step start time, type: datetime",
                     "end_time": "step end time, type: datetime",
-                    "result": "step result, type: ResultEnum",
-                    "error_message": "error message, optional"
+                    "result": "step result, type: ResultStatus",
+                    "error_message": "error message, optional",
+                    "fail_level": "fail level, type: FailLevel",
+                    "meta_data": {
+                        "action": "what action",
+                        "action_element": "which element"
+                    }
                 },
             ],
             "start_time": "scene start time, type: datetime",
             "end_time": "scene end time, type: datetime",
-            "result": "scene result, type: ResultEnum",
-            "error_message": "error message, optional"
+            "result": "scene result, type: ResultStatus",
+            "error_message": "error message, optional",
+            "fail_level": "fail level, type: FailLevel",
         }
         ```
         """
@@ -56,21 +68,13 @@ class ExcutionRecord:
         if _model == None:
             return
         obj = self._model2db(_model)
-        if _model.result == ResultEnum.Failure:
-            self.env.events.testcase_fail.fire(model=_model, notify=self.env.notify_model)
+        self.env.events.testcase_add.fire(model=_model, notify=self.env.notify_model)
         SESSION.add(obj)
 
-    @transaction
     def add_all(self, models: List[Union[ExcutionRecordModel, DictModel, JsonStrModel]]) -> None:
-        _models = [self._2model(model) for model in models]
-        if not _models:
-            return
-        objs = []
-        for model in _models:
-            if model.result == ResultEnum.Failure:
-                self.env.events.testcase_fail.fire(model=model, notify=self.env.notify_model)
-            objs.append(self._model2db(model))
-        SESSION.add_all(objs)
+        # 因为需要监听单个对象，故未使用 SESSION.add_all()
+        for model in models:
+            self.add(model)
 
     def _model2db(self, model: ExcutionRecordModel) -> ExcutionRecordDB:
         return ExcutionRecordDB(**model.model_dump())
@@ -84,6 +88,7 @@ class ExcutionRecord:
     def _2model(self, model: Union[ExcutionRecordModel, DictModel, JsonStrModel]) -> Union[ExcutionRecordModel, None]:
         _type = type(model)
         _model = None
+        self.logger.debug(f"{model=}")
         if _type == ExcutionRecordModel:
             _model = model
         elif _type == dict:

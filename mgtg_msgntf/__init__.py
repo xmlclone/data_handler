@@ -3,20 +3,22 @@ import logging
 import warnings
 import typing
 
-from data_handler.logger import config_log
-from data_handler.env import Environment
-from data_handler.services import ExcutionRecord
-from data_handler.settings import LOG_PATH
-from data_handler.dh_typing import ResultEnum
-from data_handler.event import events
+from mgtg_msgntf.logger import config_log
+from mgtg_msgntf.env import Environment
+from mgtg_msgntf.dao import ExcutionRecord
+from mgtg_msgntf.settings import LOG_PATH
+from mgtg_msgntf.constant import ResultStatus, FailLevel
+from mgtg_msgntf.event import events
+from mgtg_msgntf.deco import catch_exception_to_developer
 
 if typing.TYPE_CHECKING:
-    from data_handler.models import NotificationModel
-    from data_handler.dh_typing import JsonStrModel, DictModel
+    from mgtg_msgntf.model import NotificationModel
+    from mgtg_msgntf.dh_typing import JsonStrModel, DictModel
 
 
 __all__ = [
-    "ResultEnum",
+    "ResultStatus",
+    "FailLevel",
     "start_app",
 ]
 
@@ -27,6 +29,7 @@ except Exception as e:
     warnings.warn(e)
 
 
+@catch_exception_to_developer
 def start_app(
     *,
     notify_config: typing.Union["NotificationModel", "JsonStrModel", "DictModel"],
@@ -91,26 +94,36 @@ def start_app(
     # 增加一条数据
     app.add(Union[ExcutionRecordModel, DictModel, JsonStrModel])
 
-    # 也可以一次增加多条数据
+    # 也可以一次增加多条数据(不建议使用)
     app.add_all(List[Union[ExcutionRecordModel, DictModel, JsonStrModel]])
     ```
 
 
     2. 增加、删除事件
     ```
-    # 目前系统 `testcase_fail` 事件具有监听器 `Environment.warning_email` 和 `Environment.warning_wx` ，事件在记录数据时如果有失败时用例会触发消息通知
+    # 目前系统 `testcase_add` 事件具有监听器 `Environment.send_email` 和 `Environment.send_wx` ，事件在记录数据时会触发消息通知
+    # 但记录的的数据需要满足 `Meta` 定义的规则:
+    class Meta:
+        # 不会针对单个步骤进行判断，只会对整个用例或场景判断
+        # 单个列表里面元素之间是 or 的关系
+        # 多个列表相互之间的关系需要通过 operator 指定
+        fail_level: Optional[List[FailLevel]] = [FailLevel.PageError, FailLevel.SystemCrash]
+        result_status: Optional[List[ResultStatus]] = [ResultStatus.Failure]
+        # 表示上述等级的判断逻辑
+        operator: Optional[Literal['or', 'and']] = 'or'
+
     app = start_app(notify_config_dict)
 
     # 事件可以移除
-    app.env.events.testcase_fail.remove_listener(app.env.warning_email)
+    app.env.events.testcase_add.remove_listener(app.env.send_email)
 
     # 也可以增加自定义事件，事件回调函数有两个参数，其类型如下
     def user_listener(model: ExcutionRecordModel, notify: NotificationModel):
         ...
-    app.env.events.testcase_fail.add_listener(user_listener)
+    app.env.events.testcase_add.add_listener(user_listener)
 
     # 也可以在你想触发事件的地方主动触发事件的调用
-    app.env.events.testcase_fail.fire(ExcutionRecordModel, app.env.notify_model)
+    app.env.events.testcase_add.fire(ExcutionRecordModel, app.env.notify_model)
     ```
     """
     config_log(LOG_PATH, console_log_level)

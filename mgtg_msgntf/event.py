@@ -2,7 +2,7 @@ import logging
 import traceback
 import warnings
 
-from data_handler.apis import WX
+from mgtg_msgntf.apis import WX
 
 
 class EventHook:
@@ -43,11 +43,11 @@ class Events:
     """事件类"""
 
 
-    """用例/场景失败
+    """增加用例/场景
     :param model data_handler.models.ExcutionRecordModel
     :param notify data_handler.models.NotificationModel
     """
-    testcase_fail: EventHook
+    testcase_add: EventHook
 
     """框架异常
     :param e Exception
@@ -73,7 +73,7 @@ events = Events()
 
 
 def fw_exception_callback(e: Exception):
-    warnings.warn(e)
+    # warnings.warn(e)
     WX().notify_devoloper(f"{e}\n{traceback.format_exc()}")
 
 

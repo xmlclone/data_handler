@@ -1,7 +1,7 @@
 import time
 import click
 
-from data_handler.models.base import DB_BASE, DB_ENGINE
+from mgtg_msgntf.model.base import DB_BASE, DB_ENGINE
 
 
 @click.group()

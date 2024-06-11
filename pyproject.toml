@@ -4,16 +4,15 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "data_handler"
+name = "mgtg_msgntf"
 dependencies = [
     "pydantic>=2.7.0",
     "SQLAlchemy>=2.0.0",
     "click>=8.0.0",
     "requests>=2.31.0",
-    "schedule>=1.2.0",
 ]
 dynamic = ["version"]
-description = "data handler."
+description = "mgtg_msgntf."
 requires-python = ">=3.8"
 authors = [
     {name = "linlei", email = "linlei@migu.cn"},
@@ -25,14 +24,10 @@ include-package-data = true
 
 
 [tool.setuptools.packages.find]
-include = ["data_handler*"]
+include = ["mgtg_msgntf*"]
 namespaces = false
 
 
 [tool.setuptools_scm]
-version_file = "data_handler/_version.py"
+version_file = "mgtg_msgntf/_version.py"
 local_scheme = "no-local-version"
-
-
-# [project.scripts]
-# mgserver = "data_handler.__main__:main"
