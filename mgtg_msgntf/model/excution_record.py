@@ -26,6 +26,7 @@ class Step:
     end_time: datetime
     result_status: ResultStatus
     error_message: Optional[str] = ''
+    debug_message: Optional[str] = ''
     fail_level: Optional[FailLevel] = FailLevel.NonFail
     meta_data: Optional[PageMetaData] = None
 
@@ -65,6 +66,8 @@ class ExcutionRecordDB(DB_BASE):
     result_status: Mapped[Optional[ResultStatus]] = mapped_column(default=ResultStatus.NotExecuted)
     # 错误消息
     error_message: Mapped[Optional[str]] = mapped_column(default='')
+    # debug信息
+    debug_message: Mapped[Optional[str]] = mapped_column(default='')
     # 失败等级
     fail_level: Mapped[Optional[FailLevel]] = mapped_column(default=FailLevel.NonFail)
 
@@ -90,6 +93,7 @@ class ExcutionRecordModel(MD_BASE, extra='forbid'):
     end_time: datetime
     result_status: ResultStatus = Field(default=ResultStatus.NotExecuted)
     error_message: Optional[str] = ''
+    debug_message: Optional[str] = ''
     fail_level: Optional[FailLevel] = Field(default=FailLevel.NonFail)
 
     ai_reason_code: Optional[int] = -1
