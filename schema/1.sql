@@ -9,6 +9,7 @@ CREATE TABLE excution_record (
         end_time DATETIME NOT NULL,
         result VARCHAR(11),
         error_message VARCHAR,
+        debug_message VARCHAR,
         ai_reason_code INTEGER,
         ai_reason VARCHAR,
         act_reason_code INTEGER,

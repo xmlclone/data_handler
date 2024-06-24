@@ -65,6 +65,7 @@ model = {
             "end_time": datetime.now(),
             "result_status": ResultStatus.Success,
             "error_message": "",
+            "debug_message": "",
             "fail_level": FailLevel.NonFail,
             "meta_data": {
                 "action": "what action",
@@ -102,6 +103,7 @@ model = {
     "end_time": datetime.now(),
     "result_status": ResultStatus.Failure,
     "error_message": "error message, optional",
+    "debug_message": "debug message, optional",
     "fail_level": FailLevel.PageError
 }
 
