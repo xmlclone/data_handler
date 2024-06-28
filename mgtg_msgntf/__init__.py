@@ -38,26 +38,32 @@ def start_app(
     """启动程序，初始化相关参数并返回 `ExcutionRecord` 对象，后续可通过 `ExcutionRecord` 对象的 `add` 等方法增加记录数据
 
     :param notify_config: 消息通知配置，除邮件配置必选外，其它(微信、短信)均可选
-    :type notify_config: `NotificationModel`、字典或json格式的字符串均可，格式参考如下：
+    :type notify_config: `NotificationModel`、字典或json格式的字符串均可, 格式参考如下:
 
     ```
     {
-        "email": [
+        "email": [  # 邮件通知
             {
-                "template_id": "template_1",
-                "to_users": ["users1", "users2"],
+                "template_id": "template_1",       # type:str, 目前可选 1 2 3, 模板效果可自行验证查看
+                "to_users": ["users1", "users2"],  # type: List[str] 需要接收邮件的邮箱列表
             },
             {
                 "template_id": "template_2",
                 "to_users": ["users1", "users3"], # 不同分组的发送的人员列表可以重复
                 "cc_users": ["user2", "user4"], # 抄送人员，非必填
                 "attachements": ["path/to/file1", "path/to/file2"] # 邮件附件，非必填
+                # meta 可选，默认是 FailLevel.PageError FailLevel.SystemCrash ResultStatus.Failure 并且是or的关系
+                "meta": {
+                    "fail_level": [FailLevel.SystemCrash], # type: List[FailLevel]，失败等级
+                    "result_status": [ResultStatus.Failure], # type: List[ResultStatus]，结果等级
+                    "operator": "and"  # 可选 or 和 and, and表示上述两个条件均需要满足, or表示上述条件满足一个即可
+                }
             },
         ],
         'wx': [ # 微信通知，非必填
             {
-                "template_id": "template_1",
-                "to_users": ["users1", "users2"],
+                "template_id": "template_1",  # 目前可选 1 2
+                "to_users": ["users1", "users2"], # 微信用户ID, 可以找linlei获取
             },
             {
                 "template_id": "template_2",
@@ -102,7 +108,7 @@ def start_app(
     2. 增加、删除事件
     ```
     # 目前系统 `testcase_add` 事件具有监听器 `Environment.send_email` 和 `Environment.send_wx` ，事件在记录数据时会触发消息通知
-    # 但记录的的数据需要满足 `Meta` 定义的规则:
+    # 但记录的数据需要满足 `Meta` 定义的规则:
     class Meta:
         # 不会针对单个步骤进行判断，只会对整个用例或场景判断
         # 单个列表里面元素之间是 or 的关系

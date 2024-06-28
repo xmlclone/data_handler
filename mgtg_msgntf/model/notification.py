@@ -25,7 +25,7 @@ EMAIL_TEMPLATE1 = {
 }
 
 EMAIL_TEMPLATE2 = {
-    "subject": """f[拨测告警][{project}][{airesult}]""",
+    "subject": """[拨测告警][{project}][{airesult}]""",
     "content": """
 <html>
     <body style="width: 800px">
@@ -42,6 +42,24 @@ EMAIL_TEMPLATE2 = {
 """
 }
 
+
+EMAIL_TEMPLATE3 = {
+    "subject": """【探针告警】{project}""",
+    "content": """
+<html>
+    <body style="width: 800px">
+        <ul>
+            <li style="margin-top: 8px;">项目名称: {project}</li>
+            <li style="margin-top: 8px;">操作路径: {testcase}</li>
+            <li style="margin-top: 8px;">执行时间: {starttime}</li>
+            <li style="margin-top: 8px;">告警区域: {area}</li>
+            <li style="margin-top: 8px;">异常等级: {level}</li>
+            <li style="margin-top: 8px;">异常详情: {debug_message}</li>
+        </ul>
+    </body>
+</html>
+"""
+}
 
 
 SMS_TEMPLAET1 = {}
@@ -77,6 +95,8 @@ class EmailModel(BaseNtModel):
             return EMAIL_TEMPLATE1
         if itid == 2:
             return EMAIL_TEMPLATE2
+        if itid == 3:
+            return EMAIL_TEMPLATE3
         
 
 class SMSModel(BaseNtModel):

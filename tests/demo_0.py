@@ -18,15 +18,21 @@ TG_EMAIL_PASSWD  OA密码
 notify_config = {
     "email": [
         {
-            "template_id": "1",
+            "template_id": "3",
             "to_users": ["linlei@migu.cn"],
             # "cc_users": ["linlei@migu.cn"], # 抄送人员，非必填
             # "attachements": ["path/to/file1", "path/to/file2"] # 邮件附件，非必填
         },
-        # {
-        #     "template_id": "2",
-        #     "to_users": ["users1", "users3"], # 不同分组的发送的人员列表可以重复
-        # },
+        {
+            "template_id": "3",
+            "to_users": ["linlei@migu.cn"], # 不同分组的发送的人员列表可以重复
+            # 并且可以配置通知告警级别
+            "meta": {
+                "fail_level": [FailLevel.SystemCrash], # type: List[FailLevel]，失败等级
+                "result_status": [ResultStatus.Failure], # type: List[ResultStatus]，结果等级
+                "operator": "and"  # 可选 or 和 and, and表示上述两个条件均需要满足, or表示上述条件满足一个即可
+            }
+        },
     ],
     'wx': [ # 微信通知，非必填
         {
@@ -53,9 +59,9 @@ notify_config = {
 
 # 数据模板
 model = {
-    "project": "test-project",
+    "project": "test-project, max-length=30",
     "bus_id": 1,  # 咪咕探针，固定传1
-    "scene": "test-scene, max-length=30",   # test case name or scene name
+    "scene": "test-scene, max-length=100",   # test case name or scene name
     "area": "成都",
     "steps": [ # can be ignore
         {

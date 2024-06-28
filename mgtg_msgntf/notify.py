@@ -22,7 +22,9 @@ class Notify:
             fail_level = True
         express = f"{fail_level} {notify.meta.operator} {result_status}"
         self.logger.debug(f"{model=}, {notify=}")
-        return cast(bool, eval(express))
+        result = cast(bool, eval(express))
+        self.logger.debug(f"{express=}, {result=}")
+        return result
     
     def format_model(self, model: ExcutionRecordModel) -> Dict:
         warning_data = {
@@ -32,7 +34,9 @@ class Notify:
             "starttime": model.start_time.strftime("%Y-%m-%d %H:%M:%S"),
             "area": model.area,
             "message": model.error_message,
-            "airesult": model.ai_reason
+            "airesult": model.ai_reason,
+            "level": model.fail_level,
+            "debug_message": model.debug_message,
         }
         return warning_data
 
